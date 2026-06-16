@@ -6,7 +6,7 @@ project:
   added_at: 2026-05-21
   github_url: "https://github.com/CasparDP/reviewer2"
 
-current_focus: 1
+current_focus: 2
 
 milestones:
   - id: 1
@@ -18,10 +18,12 @@ milestones:
       upstream, lists all fork-specific changes, and includes a short 'Why
       this fork?' section; a CONTRIBUTING or Usage note covers the community
       use-case.
-    status: pending
+    status: done
     created_at: 2026-05-21
+    completed_at: 2026-06-13
     next_task: |
       Add a 'This is a fork of…' callout block at the top of README.md (above the feature table) and write a 2–3 sentence 'Why this fork?' paragraph explaining the provider-agnostic motivation.
+      
 
   - id: 2
     title: "Stable v1.x Release with Passing Smoke Test"
@@ -35,6 +37,7 @@ milestones:
     created_at: 2026-05-21
     next_task: |
       Run `grep -r 'version' pyproject.toml src/reviewer2/__init__.py README.md` to confirm all three are in sync, then cut the v1.0.1 (or v1.1.0) tag and push it with a GitHub Release entry.
+      
 
   - id: 3
     title: "SSRN Keyword Search Tool (Standalone)"
@@ -48,6 +51,7 @@ milestones:
     created_at: 2026-05-21
     next_task: |
       Prototype a Python script that fetches the SSRN search endpoint (https://api.ssrn.com/content/v1/bindings?query=…) or scrapes the search results page for a hardcoded test query and prints titles + URLs.
+      
 
   - id: 4
     title: "Integrate Working Paper Search into Review Workflow"
@@ -61,6 +65,7 @@ milestones:
     created_at: 2026-05-21
     next_task: |
       Read stages.py to find exactly where RAiner results are injected (stages 00a and 03b per CLAUDE.md), then sketch the interface a new `ssrn_search(query) -> list[dict]` function needs to match.
+      
 
   - id: 5
     title: "Personal Website Integration & Reproducible Example"
@@ -74,6 +79,7 @@ milestones:
     created_at: 2026-05-21
     next_task: |
       Pick a short open-access paper you've already reviewed, sanitise the output, and commit it to `examples/sample_report.txt` alongside the source PDF (or a DOI pointer if the PDF is too large).
+      
 
 checkin:
   last_at: null

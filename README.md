@@ -19,7 +19,7 @@ aggression produces.
 The design is described in *Yell at It: Prompt Engineering for Automated
 Peer Review* ([`paper/yellatit.pdf`](paper/yellatit.pdf)).
 
-**Version:** 1.0.1
+**Version:** 1.1.0
 
 ---
 
@@ -28,7 +28,7 @@ Peer Review* ([`paper/yellatit.pdf`](paper/yellatit.pdf)).
 | Area | Original | This fork |
 |------|----------|-----------|
 | LLM backend | Google Gemini SDK (hard dep) | OpenAI SDK with configurable `base_url` |
-| Default provider | Gemini | Ollama Cloud (`kimi-k2.5:cloud`) |
+| Default provider | Gemini | Ollama Cloud (DeepSeek V4 Flash/Pro tiers) |
 | PDF ingestion | Native Gemini file upload | [docling](https://github.com/DS4SD/docling) PDF-to-markdown (optional, graceful fallback) |
 | Config | `GEMINI_API_KEY` env var only | `reviewer2.yaml` + env vars + CLI flags |
 | Literature search | Google Search tool (Gemini-native) | [RAiner](https://github.com/CasparDP/RAiner) vector search (optional) |
@@ -40,7 +40,6 @@ Peer Review* ([`paper/yellatit.pdf`](paper/yellatit.pdf)).
 
 - Python 3.10+
 - An API key for your chosen provider (Ollama Cloud, OpenAI, etc.)
-- `qpdf` on `PATH` for PDF preprocessing
 - (Optional) [docling](https://github.com/DS4SD/docling) for PDF-to-markdown conversion
 - (Optional) [RAiner](https://github.com/CasparDP/RAiner) for literature search enrichment
 - (Optional) A Mathpix account for the math-audit add-on
@@ -96,7 +95,7 @@ pip install -e /path/to/RAiner
 ## Quickstart
 
 ```bash
-# Default run (Ollama Cloud, kimi-k2.5:cloud)
+# Default run (Ollama Cloud, DeepSeek V4 Flash/Pro)
 poetry run reviewer2 paper.pdf -o report.txt
 
 # Cheapest smoke test: base review only, outputs kept for inspection
@@ -108,11 +107,36 @@ poetry run reviewer2 paper.pdf -o report.txt \
   --model gpt-4o
 ```
 
-A default run takes 15 to 45 minutes with Gemini Flash/Pro. With a large
-model via Ollama Cloud (e.g. `kimi-k2.5:cloud`) expect 2 to 4 hours —
+A default run takes 15 to 45 minutes with Gemini Flash/Pro. With frontier
+models via Ollama Cloud expect 2 to 4 hours —
 the pipeline makes 30+ sequential API calls and throughput is governed by
 the provider's generation speed. Use `--base` for the cheapest and fastest
 run while testing. The math and code audits are opt-in.
+
+### Durable background runs for agents
+
+This fork includes a portable repo-local workflow under `.agents/skills/`:
+
+- `reviewer2-ensemble` orchestrates two user-selected blind reviewers plus the
+  DeepSeek-backed reviewer2 branch and produces a sign-off ledger.
+- `reviewer2-second-opinion` validates configuration, launches reviewer2 in the
+  background, and collects Review C.
+- `reviewer2-pi-code-review` optionally provides an independent direct-source
+  replication-code review through pi/Ollama.
+- `reviewer2-review-response` executes approved comments behind verification
+  gates.
+
+Agents that discover repository skills can use them in place. The background
+helper can also be called directly:
+
+```bash
+python .agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py check
+python .agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py start paper.pdf
+```
+
+The helper records the effective fast and strong models, protects each run in
+its own directory, and requires an explicit checkpoint for resume. See the
+skill's `SKILL.md` for collection and multi-review synthesis rules.
 
 ---
 
@@ -159,8 +183,16 @@ report also carries an author-facing editor's note with revision advice.
 ## How it works
 
 Each stage is a prompt in `prompts/`; outputs land as `.txt` files in a
-working directory and are chained together. A run is resumable by pointing
-`--work-dir` at an existing folder.
+working directory and are chained together. To resume, reuse the directory
+and name the first incomplete pipeline checkpoint explicitly:
+
+```bash
+poetry run reviewer2 paper.pdf --work-dir ./run --start-stage 3.0
+```
+
+Inspect `run/pipeline_execution.log` before choosing the checkpoint. A fresh
+run uses stage `0.0`; do not use it as a resume value because it can overwrite
+earlier stage outputs.
 
 ### 1. Red Team: five adversarial agents
 
@@ -252,8 +284,8 @@ Settings are resolved in this order (later wins): built-in defaults →
 ```yaml
 provider:
   base_url: https://ollama.com/v1
-  fast_model: kimi-k2.5:cloud
-  strong_model: kimi-k2.5:cloud
+  fast_model: deepseek-v4-flash:cloud
+  strong_model: deepseek-v4-pro:cloud
   temperature: 0.1
 ```
 

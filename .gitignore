@@ -37,7 +37,9 @@ Thumbs.db
 # Pipeline runtime
 output/
 reports/
+quality_reports/
 work/
+.reviewer2-runs/
 *.log
 
 # Agent configs (local only)

@@ -66,6 +66,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--skip-size-check", action="store_true",
         help="Bypass the 500-page combined-volume circuit breaker.",
     )
+    parser.add_argument(
+        "--start-stage", type=float, default=0.0,
+        help="Resume from this pipeline stage using an existing --work-dir. Default: 0.0.",
+    )
+    parser.add_argument(
+        "--stop-stage", type=float, default=100.0,
+        help="Stop after reaching this pipeline stage. Default: run to completion.",
+    )
+    parser.add_argument(
+        "--max-retries", type=int, default=1,
+        help="Number of attempts for each pipeline stage. Default: 1.",
+    )
 
     # ---- LLM provider ----
     parser.add_argument(
@@ -114,6 +126,13 @@ def _require_env(var: str, because: str) -> None:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+
+    if args.start_stage < 0:
+        parser.error("--start-stage must be non-negative")
+    if args.stop_stage < args.start_stage:
+        parser.error("--stop-stage must be greater than or equal to --start-stage")
+    if args.max_retries < 1:
+        parser.error("--max-retries must be at least 1")
 
     pdf_path = Path(args.pdf).expanduser()
     if not pdf_path.exists():
@@ -173,6 +192,9 @@ def main(argv: list[str] | None = None) -> int:
             supp_pdfs=args.supp or None,
             code_dir=args.code_dir,
             citation=args.citation,
+            start_stage=args.start_stage,
+            stop_stage=args.stop_stage,
+            max_retries=args.max_retries,
             skip_size_check=args.skip_size_check,
         )
     except PipelineError as e:

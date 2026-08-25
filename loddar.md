@@ -21,9 +21,6 @@ milestones:
     status: done
     created_at: 2026-05-21
     completed_at: 2026-06-13
-    next_task: |
-      Add a 'This is a fork of…' callout block at the top of README.md (above the feature table) and write a 2–3 sentence 'Why this fork?' paragraph explaining the provider-agnostic motivation.
-      
 
   - id: 2
     title: "Stable v1.x Release with Passing Smoke Test"
@@ -36,8 +33,7 @@ milestones:
     status: pending
     created_at: 2026-05-21
     next_task: |
-      Run `grep -r 'version' pyproject.toml src/reviewer2/__init__.py README.md` to confirm all three are in sync, then cut the v1.0.1 (or v1.1.0) tag and push it with a GitHub Release entry.
-      
+      Add REVIEWER2_API_KEY locally, rerun the documented --base smoke test against v1.1.0, then review and commit the release changes before creating the tag and GitHub Release.
 
   - id: 3
     title: "SSRN Keyword Search Tool (Standalone)"

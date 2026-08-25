@@ -58,7 +58,7 @@ def call_llm(
     temperature: float | None = None,
     system_instruction: str | None = None,
     max_retries: int = 10,
-    retry_forever_on_rate_limit: bool = True,
+    retry_forever_on_rate_limit: bool = False,
     step: str | None = None,
     max_output_tokens: int | None = None,
     config: Config | None = None,
@@ -129,13 +129,20 @@ def call_llm(
             if "FATAL" in err_str:
                 raise
 
+            lowered_error = err_str.lower()
+            if any(
+                marker in lowered_error
+                for marker in ("401", "403", "unauthorized", "invalid api key", "invalid_api_key")
+            ):
+                raise RuntimeError(f"Authentication failed: {err_str}") from e
+
             delay = min(base_delay * (2 ** (attempt - 1)), max_delay)
 
             if "429" in err_str:
+                if not retry_forever_on_rate_limit and attempt >= max_retries:
+                    raise RuntimeError(f"Rate limit exceeded after {attempt} attempts: {err_str}") from e
                 print(f"    ↳ Rate limited (429) on attempt {attempt}. Waiting {delay}s...")
                 time.sleep(delay)
-                if not retry_forever_on_rate_limit and attempt >= max_retries:
-                    raise RuntimeError(f"Rate limit exceeded after {attempt} attempts: {err_str}")
                 continue
             elif "500" in err_str or "502" in err_str or "503" in err_str:
                 print(f"    ⚠  Server error on attempt {attempt}. Waiting {delay}s...")
@@ -215,6 +222,10 @@ def sanitize_pdf_ghostscript(input_path):
     except Exception:
         pass
 
+    try:
+        os.unlink(fixed_path)
+    except OSError:
+        pass
     return input_path
 
 

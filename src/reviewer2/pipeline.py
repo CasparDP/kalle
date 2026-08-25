@@ -3,9 +3,9 @@
 Public entry point: ``run(pdf_path, work_dir, ...)``. The CLI in
 ``reviewer2.cli`` is a thin wrapper around it.
 
-The pipeline is resumable: stage outputs land as ``.txt`` files in ``work_dir``
-and subsequent runs pick up where a previous run stopped. Deleting a stage
-file forces that stage (and dependents) to re-run. No database is used.
+The pipeline is checkpoint-resumable: stage outputs land as ``.txt`` files in
+``work_dir`` and a subsequent run can load them when given an explicit
+``start_stage``. No database is used.
 """
 
 from __future__ import annotations
@@ -154,8 +154,7 @@ def run(
     Args:
         pdf_path: Path to the source PDF.
         work_dir: Directory for all stage outputs and the final report. Created
-            if missing. Re-running with the same ``work_dir`` resumes from the
-            last successfully written stage.
+            if missing. Resume by reusing it with an explicit ``start_stage``.
         math: Enable math-audit stages. Requires ``MATHPIX_APP_ID`` and
             ``MATHPIX_APP_KEY`` in the environment.
         code: Enable code / replication-audit stages. Off by default; requires ``code_dir``.

@@ -3,7 +3,7 @@
 ## Running the pipeline from Claude Code
 
 **Before invoking `reviewer2` on a real paper, confirm with the user.** A
-default run with Ollama Cloud (kimi-k2.5) takes 2–4 hours. With Gemini it
+default run with Ollama Cloud (DeepSeek V4 Flash/Pro) takes 2–4 hours. With Gemini it
 was 15–45 minutes. That is not a routine command to fire off autonomously.
 
 Entry point:
@@ -13,21 +13,24 @@ poetry run reviewer2 paper.pdf -o report.txt
 ```
 
 Requires `REVIEWER2_API_KEY` in the environment — put it in `.env` at the
-repo root (gitignored, auto-loaded). Requires `qpdf` on `PATH`. Install
+repo root (gitignored, auto-loaded). Install
 for development with `poetry install`.
 
 Because runs are long, start them with `run_in_background: true` rather
 than foreground. Outputs stream to the working directory (default: a temp
 dir, override with `--work-dir`); the run is resumable by pointing
-`--work-dir` at the same folder.
+`--work-dir` at the same folder and passing `--start-stage` for the first
+incomplete checkpoint. Inspect `pipeline_execution.log`; do not blindly
+restart at stage 0 because earlier outputs can be overwritten.
 
 Flags worth knowing: `--math` needs `MATHPIX_APP_ID` and
 `MATHPIX_APP_KEY`; `--code-dir PATH` enables the replication-code audit;
 `--base` disables all add-ons for the cheapest real run; the 500-page
 volume circuit breaker is overridden with `--skip-size-check`.
 
-New provider flags: `--model`, `--fast-model`, `--strong-model`,
-`--base-url`, `--config`.
+Run-control flags: `--start-stage`, `--stop-stage`, `--max-retries`.
+Provider flags: `--model`, `--fast-model`, `--strong-model`, `--base-url`,
+`--config`.
 
 ## Dev / testing gotchas
 
@@ -101,8 +104,8 @@ provider:
   api_key: ${REVIEWER2_API_KEY}
 
 models:
-  fast: kimi-k2.5:cloud       # metadata, compilation, formatting
-  strong: kimi-k2.5:cloud     # breaker, reviewer, math audit
+  fast: deepseek-v4-flash:cloud  # metadata, compilation, formatting
+  strong: deepseek-v4-pro:cloud  # breaker, reviewer, math audit
   temperature: 0.1
 ```
 
@@ -243,4 +246,4 @@ config, OpenAI SDK usage, and model selection. Key files:
 - `rainer/providers.py` (lines 314-340): adapter factory pattern
 - `rainer/search.py`: `PaperSearch` class for literature search
 - `rainer/papers.py`: `PaperDB` class for paper database
-- `config.yaml`: default config (ollama, kimi-k2.5:cloud, temp 0.1)
+- `config.yaml`: default config (Ollama Cloud, DeepSeek V4 Flash/Pro, temp 0.1)

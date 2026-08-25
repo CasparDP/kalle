@@ -10,6 +10,7 @@ The pipeline is checkpoint-resumable: stage outputs land as ``.txt`` files in
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -28,6 +29,7 @@ from reviewer2.helpers import calculate_cost
 from reviewer2.render_text import render_text
 
 MAX_COMBINED_PAGES = 500
+PDF_TEXT_CACHE_PREFIX = "_paper_text_"
 
 
 class PipelineError(RuntimeError):
@@ -68,6 +70,35 @@ def _docling_pdf(pdf_path: str) -> str:
     except Exception as e:
         print(f"  ⚠  docling conversion failed for {pdf_path}: {e}")
         return ""
+
+
+def _pdf_text_cache_path(pdf_path: Path, work_dir: Path) -> Path:
+    """Return the content-addressed markdown cache path for a PDF."""
+    digest = hashlib.sha256()
+    with pdf_path.open("rb") as pdf_file:
+        for chunk in iter(lambda: pdf_file.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return work_dir / f"{PDF_TEXT_CACHE_PREFIX}{digest.hexdigest()}.md"
+
+
+def _load_or_extract_pdf_text(pdf_path: Path, work_dir: Path) -> str:
+    """Load durable PDF markdown or extract and save it for later resumes."""
+    cache_path = _pdf_text_cache_path(pdf_path, work_dir)
+    if cache_path.exists():
+        print(f"  → Loading cached PDF markdown from {cache_path}...")
+        return cache_path.read_text(encoding="utf-8")
+
+    print("  → Converting PDF to markdown (docling)...")
+    pdf_text = _docling_pdf(str(pdf_path))
+    if not pdf_text.strip():
+        print("  ⚠ PDF markdown was empty; extraction was not saved.")
+        return ""
+
+    temporary_path = cache_path.with_suffix(".md.tmp")
+    temporary_path.write_text(pdf_text, encoding="utf-8")
+    temporary_path.replace(cache_path)
+    print(f"  ✓ Saved PDF markdown to {cache_path}.")
+    return pdf_text
 
 
 def _generate_filename_slug(authors: str | None, title: str | None, job_uuid: str) -> str:
@@ -320,12 +351,10 @@ def _run_inner(
                 shutil.rmtree(staging)
 
     # -----------------------------------------------------------------------
-    # DOCLING: convert PDF(s) to markdown and populate the text cache
+    # DOCLING: load or convert PDF(s), then populate the in-memory text cache
     # -----------------------------------------------------------------------
-    if str(target_file) not in _PDF_TEXT_CACHE:
-        print("  → Converting PDF to markdown (docling)...")
-        _PDF_TEXT_CACHE[str(target_file)] = _docling_pdf(str(target_file))
-        print(f"  ✓ Cached {len(_PDF_TEXT_CACHE[str(target_file)])} chars of PDF text.")
+    _PDF_TEXT_CACHE[str(target_file)] = _load_or_extract_pdf_text(target_file, work_dir)
+    print(f"  ✓ Cached {len(_PDF_TEXT_CACHE[str(target_file)])} chars of PDF text.")
 
     # -----------------------------------------------------------------------
     # METADATA

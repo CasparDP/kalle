@@ -130,8 +130,8 @@ Agents that discover repository skills can use them in place. The background
 helper can also be called directly:
 
 ```bash
-python .agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py check
-python .agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py start paper.pdf
+.agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py check
+.agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py start paper.pdf
 ```
 
 The helper records the effective fast and strong models, protects each run in
@@ -324,9 +324,12 @@ The pipeline degrades gracefully if RAiner is absent.
 
 ## Resumability
 
-Every stage output is written to `--work-dir` as a `.txt` file. If a run
-fails or is interrupted, re-run with the same `--work-dir` and the pipeline
-picks up where it stopped.
+Every stage output is written to `--work-dir` as a `.txt` file. The Docling
+extraction is saved there as a content-addressed `_paper_text_<hash>.md`, so
+checkpoint resumes do not repeat PDF conversion. If a run fails or is
+interrupted, inspect
+`pipeline_execution.log`, then re-run with the same `--work-dir` and an
+explicit `--start-stage` for the first incomplete checkpoint.
 
 ---
 

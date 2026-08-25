@@ -27,15 +27,15 @@ The helper is [scripts/reviewer2_job.py](scripts/reviewer2_job.py). Run it direc
 From the reviewer2 checkout:
 
 ```bash
-python .agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py check
-python .agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py start PAPER.pdf
-python .agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py status RUN_DIR
+.agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py check
+.agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py start PAPER.pdf
+.agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py status RUN_DIR
 ```
 
 Use `start --help` for supplements, math, code, configuration, and run-directory flags. The helper uses a durable run directory, explicit reviewer2 work directory, timestamped state, a combined log, and `caffeinate` when available. A failed or interrupted run must be resumed from an explicit pipeline checkpoint: inspect `status` and `work/pipeline_execution.log`, identify the first failed/incomplete stage, and supply that stage number. The helper deliberately refuses a blind stage-0 “resume,” which would overwrite earlier work.
 
 ```bash
-python .agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py resume RUN_DIR --start-stage STAGE
+.agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py resume RUN_DIR --start-stage STAGE
 ```
 
 Never launch two processes against the same run directory. Use `stop RUN_DIR` only for a job created by this helper.

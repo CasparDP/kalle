@@ -3,7 +3,7 @@
 ## Running the pipeline from Claude Code
 
 **Before invoking `reviewer2` on a real paper, confirm with the user.** A
-default run with Ollama Cloud (DeepSeek V4 Flash/Pro) takes 2–4 hours. With Gemini it
+default run with Ollama Cloud (DeepSeek V4.1 Flash/Pro) takes 2–4 hours. With Gemini it
 was 15–45 minutes. That is not a routine command to fire off autonomously.
 
 Entry point:
@@ -104,7 +104,7 @@ provider:
   api_key: ${REVIEWER2_API_KEY}
 
 models:
-  fast: deepseek-v4-flash:cloud  # metadata, compilation, formatting
+  fast: deepseek-v4.1-flash:cloud  # metadata, compilation, formatting
   strong: deepseek-v4-pro:cloud  # breaker, reviewer, math audit
   temperature: 0.1
 ```
@@ -246,4 +246,4 @@ config, OpenAI SDK usage, and model selection. Key files:
 - `rainer/providers.py` (lines 314-340): adapter factory pattern
 - `rainer/search.py`: `PaperSearch` class for literature search
 - `rainer/papers.py`: `PaperDB` class for paper database
-- `config.yaml`: default config (Ollama Cloud, DeepSeek V4 Flash/Pro, temp 0.1)
+- `config.yaml`: default config (Ollama Cloud, DeepSeek V4.1 Flash/Pro, temp 0.1)

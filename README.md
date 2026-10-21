@@ -28,7 +28,7 @@ Peer Review* ([`paper/yellatit.pdf`](paper/yellatit.pdf)).
 | Area | Original | This fork |
 |------|----------|-----------|
 | LLM backend | Google Gemini SDK (hard dep) | OpenAI SDK with configurable `base_url` |
-| Default provider | Gemini | Ollama Cloud (DeepSeek V4 Flash/Pro tiers) |
+| Default provider | Gemini | Ollama Cloud (DeepSeek V4.1 Flash/Pro tiers) |
 | PDF ingestion | Native Gemini file upload | [docling](https://github.com/DS4SD/docling) PDF-to-markdown (optional, graceful fallback) |
 | Config | `GEMINI_API_KEY` env var only | `reviewer2.yaml` + env vars + CLI flags |
 | Literature search | Google Search tool (Gemini-native) | [RAiner](https://github.com/CasparDP/RAiner) vector search (optional) |
@@ -95,7 +95,7 @@ pip install -e /path/to/RAiner
 ## Quickstart
 
 ```bash
-# Default run (Ollama Cloud, DeepSeek V4 Flash/Pro)
+# Default run (Ollama Cloud, DeepSeek V4.1 Flash/Pro)
 poetry run reviewer2 paper.pdf -o report.txt
 
 # Cheapest smoke test: base review only, outputs kept for inspection
@@ -284,7 +284,7 @@ Settings are resolved in this order (later wins): built-in defaults →
 ```yaml
 provider:
   base_url: https://ollama.com/v1
-  fast_model: deepseek-v4-flash:cloud
+  fast_model: deepseek-v4.1-flash:cloud
   strong_model: deepseek-v4-pro:cloud
   temperature: 0.1
 ```

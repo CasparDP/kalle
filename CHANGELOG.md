@@ -1,9 +1,9 @@
 # Changelog
 
-## 1.1.0 — 2026-08-23
+## 1.1.0 — 2026-10-21
 
 - Added a provider-agnostic OpenAI-compatible backend with configurable fast
-  and strong model tiers; the fork defaults to DeepSeek V4 Flash/Pro through
+  and strong model tiers; the fork defaults to DeepSeek V4.1 Flash/Pro through
   Ollama Cloud.
 - Added durable background execution, explicit checkpoint resume, effective
   model provenance, and portable agent skills for multi-model review workflows.

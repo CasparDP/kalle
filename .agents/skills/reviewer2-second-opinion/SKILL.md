@@ -20,7 +20,7 @@ In the preferred ensemble lineup, reviewer2 is Review C. Reviews A and B are cho
 1. Resolve the paper PDF, optional supplementary PDFs, optional replication-code directory, and whether math auditing is wanted.
 2. Explain that a full run can take hours and requires external model calls. An explicit request for the reviewer2 or full ensemble run authorizes launch; otherwise confirm before starting.
 3. Run the helper's `check` command. It verifies the installed runner, effective provider/model configuration, and authentication presence without printing secret values. Validate the PDF and optional code/supplement paths with `start --dry-run`.
-4. Keep reviewer2 on its configured DeepSeek tiers unless the user explicitly supplies a different config. The repository defaults are DeepSeek V4 Flash for light stages and DeepSeek V4 Pro for substantive stages. The helper records the effective models and refuses a non-DeepSeek configuration unless `--allow-non-deepseek` makes the override explicit.
+4. Keep reviewer2 on its configured DeepSeek tiers unless the user explicitly supplies a different config. The repository defaults are DeepSeek V4.1 Flash for light stages and DeepSeek V4 Pro for substantive stages. The helper records the effective models and refuses a non-DeepSeek configuration unless `--allow-non-deepseek` makes the override explicit.
 
 The helper is [scripts/reviewer2_job.py](scripts/reviewer2_job.py). Run it directly or with Python:
 

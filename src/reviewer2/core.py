@@ -23,6 +23,11 @@ USAGE_LOG: list[dict] = []
 # { local_file_path: markdown_text } — populated by pipeline before stages run.
 _PDF_TEXT_CACHE: dict[str, str] = {}
 
+# Output cap applied when a stage sets none. Clean stage outputs used under 45k
+# tokens in testing (reasoning included); a model stuck in a repetition loop hits the cap
+# in minutes instead of generating for an hour.
+DEFAULT_MAX_OUTPUT_TOKENS = 64_000
+
 # Lazy-loaded config singleton (overridable by passing config= to call_llm).
 _config: Config | None = None
 
@@ -102,9 +107,8 @@ def call_llm(
                 "model": model_name,
                 "messages": messages,
                 "temperature": temperature if temperature is not None else cfg.provider.temperature,
+                "max_tokens": max_output_tokens or DEFAULT_MAX_OUTPUT_TOKENS,
             }
-            if max_output_tokens:
-                kwargs["max_tokens"] = max_output_tokens
 
             response = client.chat.completions.create(**kwargs)
 
@@ -119,6 +123,8 @@ def call_llm(
                 })
 
             result = response.choices[0].message.content
+            if response.choices[0].finish_reason == "length":
+                print(f"    ⚠  Output hit the {kwargs['max_tokens']}-token cap ({step or 'unknown step'}); likely truncated.")
             if not result or not result.strip():
                 raise ValueError("API returned empty string")
             return result

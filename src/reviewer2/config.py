@@ -14,7 +14,7 @@ class ProviderConfig(BaseModel):
     base_url: str = "https://ollama.com/v1"
     api_key: str | None = Field(default_factory=lambda: os.getenv("REVIEWER2_API_KEY"))
     fast_model: str = "deepseek-v4.1-flash:cloud"
-    strong_model: str = "deepseek-v4-pro:cloud"
+    strong_model: str = "kimi-k2.6:cloud"
     temperature: float = 0.1
 
 

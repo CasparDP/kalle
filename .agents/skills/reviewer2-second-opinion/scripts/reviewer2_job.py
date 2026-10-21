@@ -80,11 +80,14 @@ def _runner_command(repo: Path) -> list[str]:
 def _effective_provider(repo: Path, config_path: str | None = None) -> dict[str, Any]:
     """Resolve the same provider configuration the reviewer2 CLI will use."""
     script = (
-        "import json,sys; from reviewer2.config import load_config; "
+        "import json,sys; from reviewer2.config import ProviderConfig, load_config; "
         "c=load_config(None if sys.argv[1] == '-' else sys.argv[1]); "
+        "d=ProviderConfig.model_fields; "
         "print(json.dumps({'base_url': c.provider.base_url, "
         "'fast_model': c.provider.fast_model, "
         "'strong_model': c.provider.strong_model, "
+        "'default_fast_model': d['fast_model'].default, "
+        "'default_strong_model': d['strong_model'].default, "
         "'api_key_present': bool(c.provider.api_key)}))"
     )
     command = _runner_command(repo)
@@ -110,9 +113,9 @@ def _effective_provider(repo: Path, config_path: str | None = None) -> dict[str,
         raise RuntimeError("reviewer2 provider config returned invalid output") from error
 
 
-def _deepseek_models(provider: dict[str, Any]) -> bool:
+def _default_models(provider: dict[str, Any]) -> bool:
     return all(
-        "deepseek" in str(provider.get(key, "")).lower()
+        provider.get(key) == provider.get(f"default_{key}")
         for key in ("fast_model", "strong_model")
     )
 
@@ -315,7 +318,7 @@ def cmd_check(args: argparse.Namespace) -> int:
         "env_file_permissions_secure": env_file_permissions_secure,
         "caffeinate": shutil.which("caffeinate"),
         "provider": {key: value for key, value in provider.items() if key != "api_key_present"},
-        "deepseek_locked": _deepseek_models(provider),
+        "default_models": _default_models(provider),
     }
     if args.json:
         print(json.dumps(payload, indent=2, sort_keys=True))
@@ -327,7 +330,7 @@ def cmd_check(args: argparse.Namespace) -> int:
     ready = (
         payload["runner_ready"]
         and (api_key_present or args.allow_missing_api_key)
-        and (payload["deepseek_locked"] or args.allow_non_deepseek)
+        and (payload["default_models"] or args.allow_non_default)
     )
     return 0 if ready else 2
 
@@ -360,10 +363,10 @@ def cmd_start(args: argparse.Namespace) -> int:
     if not provider["api_key_present"] and not args.allow_missing_api_key:
         print("error: REVIEWER2_API_KEY is not available in the effective config", file=sys.stderr)
         return 2
-    if not _deepseek_models(provider) and not args.allow_non_deepseek:
+    if not _default_models(provider) and not args.allow_non_default:
         print(
-            "error: effective reviewer2 models are not both DeepSeek; "
-            "pass --allow-non-deepseek for an intentional override",
+            "error: effective reviewer2 models differ from the repository defaults; "
+            "pass --allow-non-default for an intentional override",
             file=sys.stderr,
         )
         return 2
@@ -595,9 +598,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Allow providers that genuinely do not require authentication.",
     )
     check.add_argument(
+        "--allow-non-default",
         "--allow-non-deepseek",
+        dest="allow_non_default",
         action="store_true",
-        help="Accept an intentional non-DeepSeek reviewer2 configuration.",
+        help="Accept an intentional non-default reviewer2 model configuration.",
     )
     check.set_defaults(func=cmd_check)
 
@@ -616,7 +621,9 @@ def build_parser() -> argparse.ArgumentParser:
     start.add_argument("--no-caffeinate", action="store_true")
     start.add_argument("--dry-run", action="store_true")
     start.add_argument("--allow-missing-api-key", action="store_true")
-    start.add_argument("--allow-non-deepseek", action="store_true")
+    start.add_argument(
+        "--allow-non-default", "--allow-non-deepseek", dest="allow_non_default", action="store_true"
+    )
     start.set_defaults(func=cmd_start)
 
     status = subparsers.add_parser("status", help="Show durable status and the log tail.")

@@ -1,6 +1,6 @@
 ---
 name: reviewer2-ensemble
-description: Orchestrate an explicit three-branch academic-paper review using two user-selected blind strong models plus reviewer2 as an independent DeepSeek branch, then synthesize a ranked sign-off ledger. Use only when the user asks for an ensemble, multi-model review, or submission hardening.
+description: Orchestrate an explicit three-branch academic-paper review using two user-selected blind strong models plus reviewer2 as an independent branch on its default models, then synthesize a ranked sign-off ledger. Use only when the user asks for an ensemble, multi-model review, or submission hardening.
 ---
 
 # reviewer2 ensemble
@@ -11,7 +11,7 @@ review remains single-model; activate this workflow only on explicit request.
 ```text
 Review A (user-selected strong model) ─┐
 Review B (user-selected strong model) ─┼─ barrier ─ synthesis ─ sign-off
-Review C (reviewer2 DeepSeek tiers) ───┘
+Review C (reviewer2 default tiers) ────┘
 
 Optional code ─ reviewer2 audit + independent direct-source review ─ code ledger
 ```
@@ -20,8 +20,8 @@ Optional code ─ reviewer2 audit + independent direct-source review ─ code le
 
 1. Ask the user to choose the exact models/providers for A and B from routes
    actually callable in the current environment. Recommend different model
-   families and preferably different providers. Sol + Kimi is a useful
-   default; Claude is a strong alternative for greater provider diversity.
+   families and preferably different providers. reviewer2's strong tier is
+   Kimi, so avoid Kimi for A and B; Sol + Claude is a useful default.
 2. Record provider, exact model, reasoning setting, adapter, Review ID, and
    artifact path. Never silently substitute a failed or unavailable model.
 3. Give A and B the identical paper, supplements, instructions, and output
@@ -30,7 +30,7 @@ Optional code ─ reviewer2 audit + independent direct-source review ─ code le
    `reviews/review_<slug>_A.qmd`, `reviews/review_<slug>_B.qmd`, and raw outputs
    under `reviews/raw/`.
 4. Load `reviewer2-second-opinion` and launch it as Review C. It stays on its
-   effective DeepSeek fast/strong tiers unless the user explicitly overrides
+   effective default fast/strong tiers unless the user explicitly overrides
    them.
 
 ## Individual-review contract

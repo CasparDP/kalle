@@ -23,6 +23,16 @@ SPEC.loader.exec_module(reviewer2_job)
 
 
 class Reviewer2JobTests(unittest.TestCase):
+    def test_default_models_lock(self) -> None:
+        provider = {
+            "fast_model": "fast:cloud",
+            "strong_model": "strong:cloud",
+            "default_fast_model": "fast:cloud",
+            "default_strong_model": "strong:cloud",
+        }
+        self.assertTrue(reviewer2_job._default_models(provider))
+        self.assertFalse(reviewer2_job._default_models({**provider, "strong_model": "other:cloud"}))
+
     def test_dotenv_presence_without_exposing_value(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             dotenv = Path(temporary) / ".env"

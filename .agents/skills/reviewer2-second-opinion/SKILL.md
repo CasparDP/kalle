@@ -13,14 +13,14 @@ Use reviewer2 as an independent adversarial review branch. Preserve its raw repo
 - **Ensemble:** launch reviewer2 alongside the two blind `academic-paper-review` branches, then wait at the synthesis barrier until all three reports exist.
 - **Code-aware:** when replication code is supplied, pass `--code-dir`. reviewer2 runs its Divergence Hunter, Bug Hunter, and Data Archaeologist followed by consolidation and verification. Treat this as one code-audit pipeline, not three independent reviewers.
 
-In the preferred ensemble lineup, reviewer2 is Review C. Reviews A and B are chosen explicitly by the user for each run; the default recommendation is Sol + Kimi when available, with Claude offered as the main alternative.
+In the preferred ensemble lineup, reviewer2 is Review C. Reviews A and B are chosen explicitly by the user for each run; the default recommendation is Sol + Claude, avoiding Kimi because reviewer2's strong tier runs on Kimi.
 
 ## Before launch
 
 1. Resolve the paper PDF, optional supplementary PDFs, optional replication-code directory, and whether math auditing is wanted.
 2. Explain that a full run can take hours and requires external model calls. An explicit request for the reviewer2 or full ensemble run authorizes launch; otherwise confirm before starting.
 3. Run the helper's `check` command. It verifies the installed runner, effective provider/model configuration, and authentication presence without printing secret values. Validate the PDF and optional code/supplement paths with `start --dry-run`.
-4. Keep reviewer2 on its configured DeepSeek tiers unless the user explicitly supplies a different config. The repository defaults are DeepSeek V4.1 Flash for light stages and DeepSeek V4 Pro for substantive stages. The helper records the effective models and refuses a non-DeepSeek configuration unless `--allow-non-deepseek` makes the override explicit.
+4. Keep reviewer2 on its repository default models unless the user explicitly supplies a different config. The defaults are DeepSeek V4.1 Flash for light stages and Kimi K2.6 for substantive stages. The helper records the effective models and refuses a configuration that differs from the defaults unless `--allow-non-default` makes the override explicit.
 
 The helper is [scripts/reviewer2_job.py](scripts/reviewer2_job.py). Run it directly or with Python:
 

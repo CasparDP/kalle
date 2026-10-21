@@ -28,7 +28,7 @@ Peer Review* ([`paper/yellatit.pdf`](paper/yellatit.pdf)).
 | Area | Original | This fork |
 |------|----------|-----------|
 | LLM backend | Google Gemini SDK (hard dep) | OpenAI SDK with configurable `base_url` |
-| Default provider | Gemini | Ollama Cloud (DeepSeek V4.1 Flash/Pro tiers) |
+| Default provider | Gemini | Ollama Cloud (DeepSeek V4.1 Flash fast tier, Kimi K2.6 strong tier) |
 | PDF ingestion | Native Gemini file upload | [docling](https://github.com/DS4SD/docling) PDF-to-markdown (optional, graceful fallback) |
 | Config | `GEMINI_API_KEY` env var only | `reviewer2.yaml` + env vars + CLI flags |
 | Literature search | Google Search tool (Gemini-native) | [RAiner](https://github.com/CasparDP/RAiner) vector search (optional) |
@@ -95,7 +95,7 @@ pip install -e /path/to/RAiner
 ## Quickstart
 
 ```bash
-# Default run (Ollama Cloud, DeepSeek V4.1 Flash/Pro)
+# Default run (Ollama Cloud, DeepSeek V4.1 Flash + Kimi K2.6)
 poetry run reviewer2 paper.pdf -o report.txt
 
 # Cheapest smoke test: base review only, outputs kept for inspection
@@ -118,7 +118,7 @@ run while testing. The math and code audits are opt-in.
 This fork includes a portable repo-local workflow under `.agents/skills/`:
 
 - `reviewer2-ensemble` orchestrates two user-selected blind reviewers plus the
-  DeepSeek-backed reviewer2 branch and produces a sign-off ledger.
+  reviewer2 branch on its default models and produces a sign-off ledger.
 - `reviewer2-second-opinion` validates configuration, launches reviewer2 in the
   background, and collects Review C.
 - `reviewer2-pi-code-review` optionally provides an independent direct-source
@@ -285,7 +285,7 @@ Settings are resolved in this order (later wins): built-in defaults →
 provider:
   base_url: https://ollama.com/v1
   fast_model: deepseek-v4.1-flash:cloud
-  strong_model: deepseek-v4-pro:cloud
+  strong_model: kimi-k2.6:cloud
   temperature: 0.1
 ```
 

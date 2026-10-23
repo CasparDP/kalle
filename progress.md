@@ -26,3 +26,16 @@ STATE: v2.0.0 rename is on main (d03bfad, author commit 3d8bcd1), tag v2.0.0 pus
 DECISIONS: persona Kalle; header BANG BOOM REVIEW; summary section Does It Hold Up?; NOTICE keeps 'Copyright 2026 Caspar'; local folder stays ~/Github/reviewer2.
 GOTCHAS: always gh -R CasparDP/kalle; never git push --tags; poetry venv is kalle-*-py3.12 with hand-installed packages.
 TASKS: the Open items above, then milestone 3.
+
+## 2026-10-23 18:06 — Caspars-MacBook-Pro.local
+
+Progress: Renamed the fork from reviewer2 to kalle (v2.0.0, tagged and pushed; GitHub repo is now CasparDP/kalle), as the upstream NOTICE requires; reports carry "BANG BOOM REVIEW", the Kalle persona, and a "Does It Hold Up?" summary, with no upstream branding, checked by a live writer-stage run on Speaking Politics; Caspar added as author; kalle skill installed for Claude, Codex, .agents, and pi; dot-files updated and pushed (c339851).
+Open: Repeat the rename steps on casparm2 and icke (git pull in reviewer2 and dot-files, .env keys to KALLE_*, rebuild the poetry env with docling, RAiner, pytest, ruff, opencv, relink the kalle skill in ~/.claude, ~/.codex, ~/.agents); one full kalle run on a new paper to exercise the renamed persona prompts (02g, 03c, 05c); LODDAR project name and github_url still say reviewer2 (change in the LODDAR app).
+Next: Prototype a Python script that fetches the SSRN search endpoint (https://api.ssrn.com/content/v1/bindings?query=…) or scrapes the search results page for a hardcoded test query and prints titles + URLs.
+
+Resume context:
+READ FIRST: loddar.md, CLAUDE.md, CHANGELOG.md (2.0.0 entry)
+STATE: v2.0.0 rename is on main (d03bfad, author commit 3d8bcd1), tag v2.0.0 pushed; tests pass (14). Live check output: smoke_test/kalle-v2.0.0-writer/report_kalle.txt. dot-files pushed at c339851.
+DECISIONS: persona Kalle; header BANG BOOM REVIEW; summary section Does It Hold Up?; NOTICE keeps 'Copyright 2026 Caspar'; local folder stays ~/Github/reviewer2.
+GOTCHAS: always gh -R CasparDP/kalle; never git push --tags; poetry venv is kalle-*-py3.12 with hand-installed packages.
+TASKS: the Open items above, then milestone 3.

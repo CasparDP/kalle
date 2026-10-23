@@ -9,7 +9,7 @@ description = "Adversarial peer review pipeline for academic PDFs."
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "Apache-2.0"}
-authors = [{name = "The Catalogue of Errors Ltd"}]
+authors = [{name = "The Catalogue of Errors Ltd"}, {name = "Caspar"}]
 keywords = ["peer-review", "llm", "academic", "pdf"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",

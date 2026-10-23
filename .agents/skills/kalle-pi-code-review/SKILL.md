@@ -1,17 +1,17 @@
 ---
-name: reviewer2-pi-code-review
-description: Run an optional independent direct-source replication-code review through pi and Ollama, save the raw report, and return findings to reviewer2's code sign-off ledger. Use only when replication code is supplied or the user explicitly requests a pi code review.
+name: kalle-pi-code-review
+description: Run an optional independent direct-source replication-code review through pi and Ollama, save the raw report, and return findings to kalle's code sign-off ledger. Use only when replication code is supplied or the user explicitly requests a pi code review.
 ---
 
-# reviewer2 pi code review
+# kalle pi code review
 
-This branch reviews source code directly and independently of reviewer2's
+This branch reviews source code directly and independently of kalle's
 compiled-code audit. It is optional: if pi or the selected Ollama model is not
 available, record a coverage gap rather than silently substituting the
 synthesizer.
 
 1. Confirm `pi` is callable and select a model. Default to
-   `${REVIEWER2_PI_MODEL:-glm-5.2:cloud}` only when it exists in the local pi
+   `${KALLE_PI_MODEL:-glm-5.2:cloud}` only when it exists in the local pi
    catalog. Keep pi standalone with `--no-session -ne -ns -nc -nt`.
 2. Run a one-word handshake before attaching substantial code.
 3. Use [reviewer-prompt.md](reviewer-prompt.md) as the system prompt. Attach the

@@ -14,8 +14,8 @@ from pathlib import Path
 from openai import OpenAI
 from pypdf import PdfReader, PdfWriter
 
-from reviewer2.config import Config, load_config
-from reviewer2.paths import prompts_dir
+from kalle.config import Config, load_config
+from kalle.paths import prompts_dir
 
 # Per-call usage records.
 USAGE_LOG: list[dict] = []
@@ -180,7 +180,7 @@ def load_prompt(prompt_path):
     """Load a prompt file and inline the ``{{OUTPUT_FORMAT}}`` resource if referenced.
 
     A relative path of the form ``prompts/<name>`` resolves against the packaged
-    prompts directory (overridable via ``REVIEWER2_PROMPTS_DIR``), so pipeline
+    prompts directory (overridable via ``KALLE_PROMPTS_DIR``), so pipeline
     callers can keep using short literals regardless of cwd.
     """
     path = Path(prompt_path)

@@ -1,9 +1,9 @@
 ---
-name: reviewer2-review-response
-description: Turn reviewer2 ensemble sign-off ledgers into traceable, verified manuscript and code revisions. Use after the user approves specific academic or code-review findings; never use to implement pending comments before sign-off.
+name: kalle-review-response
+description: Turn kalle ensemble sign-off ledgers into traceable, verified manuscript and code revisions. Use after the user approves specific academic or code-review findings; never use to implement pending comments before sign-off.
 ---
 
-# reviewer2 review response
+# kalle review response
 
 ## Triage
 

@@ -3,8 +3,8 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "reviewer2"
-version = "1.1.0"
+name = "kalle"
+version = "2.0.0"
 description = "Adversarial peer review pipeline for academic PDFs."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -48,18 +48,18 @@ dev = [
 ]
 
 [project.scripts]
-reviewer2 = "reviewer2.cli:main"
+kalle = "kalle.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/CasparDP/reviewer2"
-Issues = "https://github.com/CasparDP/reviewer2/issues"
-Source = "https://github.com/CasparDP/reviewer2"
+Homepage = "https://github.com/CasparDP/kalle"
+Issues = "https://github.com/CasparDP/kalle/issues"
+Source = "https://github.com/CasparDP/kalle"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-reviewer2 = [
+kalle = [
     "prompts/*.txt",
     "prompts/resources/*.txt",
     "prompts/resources/*.pdf",

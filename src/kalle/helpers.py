@@ -7,8 +7,8 @@ import os
 import re
 import zipfile
 
-from reviewer2.core import call_llm, load_prompt
-from reviewer2.paths import prompts_dir
+from kalle.core import call_llm, load_prompt
+from kalle.paths import prompts_dir
 
 CODE_ALLOWED_EXTENSIONS = {
     ".py", ".r", ".do", ".ado", ".rmd", ".ipynb", ".jl", ".m",

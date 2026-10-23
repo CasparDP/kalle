@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 from pypdf import PdfReader, PdfWriter
 
-from reviewer2 import pipeline
+from kalle import pipeline
 
 
 class PipelinePdfCacheTests(unittest.TestCase):

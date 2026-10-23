@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.0.0 - 2026-10-23
+
+Breaking: the fork is renamed from `reviewer2` to `kalle`, as the upstream
+NOTICE asks forks to use a different name.
+
+- CLI command, Python package, and import path are now `kalle`
+  (`poetry run kalle paper.pdf -o report.txt`).
+- Environment variables are now `KALLE_*` (`KALLE_API_KEY`, `KALLE_BASE_URL`,
+  `KALLE_FAST_MODEL`, `KALLE_STRONG_MODEL`, `KALLE_PROMPTS_DIR`,
+  `KALLE_PRICING_CSV`, `KALLE_REPO`); config files are `./kalle.yaml` and
+  `~/.config/kalle/config.yaml`. Rename the keys in an existing `.env`.
+- Reports carry the header "BANG BOOM REVIEW" and a `kalle` footer. The
+  summary section is now "Does It Hold Up?" (old work directories still
+  render). Prompts call the reviewer persona Kalle instead of Reviewer 2.
+- Agent skills are renamed: `kalle` (direct runs from an agent terminal, was
+  `reviewer2-second-opinion`), `kalle-ensemble`, `kalle-pi-code-review`,
+  `kalle-review-response`. The helper's run directory is now `.kalle-runs/`.
+
 ## 1.1.0 — 2026-10-21
 
 - Added a provider-agnostic OpenAI-compatible backend with configurable fast

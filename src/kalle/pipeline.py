@@ -1,7 +1,7 @@
-"""Pipeline orchestrator for reviewer2.
+"""Pipeline orchestrator for kalle.
 
 Public entry point: ``run(pdf_path, work_dir, ...)``. The CLI in
-``reviewer2.cli`` is a thin wrapper around it.
+``kalle.cli`` is a thin wrapper around it.
 
 The pipeline is checkpoint-resumable: stage outputs land as ``.txt`` files in
 ``work_dir`` and a subsequent run can load them when given an explicit
@@ -23,10 +23,10 @@ from pathlib import Path
 
 from pypdf import PdfReader, PdfWriter
 
-from reviewer2 import stages
-from reviewer2.core import USAGE_LOG, _PDF_TEXT_CACHE, merge_pdfs_python
-from reviewer2.helpers import calculate_cost
-from reviewer2.render_text import render_text
+from kalle import stages
+from kalle.core import USAGE_LOG, _PDF_TEXT_CACHE, merge_pdfs_python
+from kalle.helpers import calculate_cost
+from kalle.render_text import render_text
 
 MAX_COMBINED_PAGES = 500
 PDF_TEXT_CACHE_PREFIX = "_paper_text_"

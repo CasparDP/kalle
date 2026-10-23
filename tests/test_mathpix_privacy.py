@@ -7,7 +7,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from reviewer2.mathpix import extract_equations_mathpix
+from kalle.mathpix import extract_equations_mathpix
 
 
 class MathpixPrivacyTests(unittest.TestCase):
@@ -20,7 +20,7 @@ class MathpixPrivacyTests(unittest.TestCase):
                 "os.environ",
                 {"MATHPIX_APP_ID": "id", "MATHPIX_APP_KEY": "key"},
                 clear=False,
-            ), patch("reviewer2.mathpix.requests.post", return_value=response) as post:
+            ), patch("kalle.mathpix.requests.post", return_value=response) as post:
                 self.assertIsNone(extract_equations_mathpix(str(pdf), "1-2"))
 
         options = json.loads(post.call_args.kwargs["data"]["options_json"])

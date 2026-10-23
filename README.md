@@ -1,11 +1,14 @@
-# reviewer2
+# kalle
 
 Adversarial peer review for academic PDFs.
 
-`reviewer2` is a fork of the open-source pipeline behind
+`kalle` is a fork of `reviewer2`, the open-source pipeline behind
 [isitcredible.com](https://isitcredible.com/) by
 [The Catalogue of Errors Ltd](https://github.com/isitcredible/reviewer2).
-The original design and all prompt engineering are their work. This fork
+The original design and all prompt engineering are their work. The fork is
+named after Kalle Grabowski, the escaped convict in *Bang Boom Bang* who wants
+his loot back; it was renamed from `reviewer2` in v2.0.0 because the upstream
+NOTICE asks forks to use a different name. This fork
 replaces the hard Google Gemini dependency with a provider-agnostic backend
 built on the OpenAI SDK, so the same pipeline can run against Ollama Cloud,
 OpenAI, or any OpenAI-compatible endpoint.
@@ -19,7 +22,7 @@ aggression produces.
 The design is described in *Yell at It: Prompt Engineering for Automated
 Peer Review* ([`paper/yellatit.pdf`](paper/yellatit.pdf)).
 
-**Version:** 1.1.0
+**Version:** 2.0.0
 
 ---
 
@@ -30,7 +33,8 @@ Peer Review* ([`paper/yellatit.pdf`](paper/yellatit.pdf)).
 | LLM backend | Google Gemini SDK (hard dep) | OpenAI SDK with configurable `base_url` |
 | Default provider | Gemini | Ollama Cloud (DeepSeek V4.1 Flash fast tier, Kimi K2.6 strong tier) |
 | PDF ingestion | Native Gemini file upload | [docling](https://github.com/DS4SD/docling) PDF-to-markdown (optional, graceful fallback) |
-| Config | `GEMINI_API_KEY` env var only | `reviewer2.yaml` + env vars + CLI flags |
+| Name | `kalle` | `kalle` (CLI, package, `KALLE_*` env vars) |
+| Config | `GEMINI_API_KEY` env var only | `kalle.yaml` + env vars + CLI flags |
 | Literature search | Google Search tool (Gemini-native) | [RAiner](https://github.com/CasparDP/RAiner) vector search (optional) |
 | Dependencies | `google-genai`, reportlab | `openai`, `pydantic`, `pyyaml`, `python-dotenv` |
 
@@ -51,8 +55,8 @@ Peer Review* ([`paper/yellatit.pdf`](paper/yellatit.pdf)).
 Clone and install for development with Poetry:
 
 ```bash
-git clone https://github.com/CasparDP/reviewer2
-cd reviewer2
+git clone https://github.com/CasparDP/kalle
+cd kalle
 poetry install
 ```
 
@@ -70,7 +74,7 @@ Copy the environment template and fill in your API key:
 
 ```bash
 cp .env.example .env
-# edit .env: set REVIEWER2_API_KEY=your-key-here
+# edit .env: set KALLE_API_KEY=your-key-here
 ```
 
 The `.env` file is loaded automatically and is gitignored. No `export`
@@ -96,13 +100,13 @@ pip install -e /path/to/RAiner
 
 ```bash
 # Default run (Ollama Cloud, DeepSeek V4.1 Flash + Kimi K2.6)
-poetry run reviewer2 paper.pdf -o report.txt
+poetry run kalle paper.pdf -o report.txt
 
 # Cheapest smoke test: base review only, outputs kept for inspection
-poetry run reviewer2 paper.pdf -o report.txt --base --work-dir ./run --keep-work-dir
+poetry run kalle paper.pdf -o report.txt --base --work-dir ./run --keep-work-dir
 
 # OpenAI
-poetry run reviewer2 paper.pdf -o report.txt \
+poetry run kalle paper.pdf -o report.txt \
   --base-url https://api.openai.com/v1 \
   --model gpt-4o
 ```
@@ -117,21 +121,22 @@ run while testing. The math and code audits are opt-in.
 
 This fork includes a portable repo-local workflow under `.agents/skills/`:
 
-- `reviewer2-ensemble` orchestrates two user-selected blind reviewers plus the
-  reviewer2 branch on its default models and produces a sign-off ledger.
-- `reviewer2-second-opinion` validates configuration, launches reviewer2 in the
-  background, and collects Review C.
-- `reviewer2-pi-code-review` optionally provides an independent direct-source
+- `kalle` runs kalle on a paper from Claude Code, T3, or any agent terminal:
+  it validates configuration, launches a durable background run, reports
+  status, resumes from a checkpoint, and collects the report.
+- `kalle-ensemble` orchestrates two user-selected blind reviewers plus the
+  kalle branch on its default models and produces a sign-off ledger.
+- `kalle-pi-code-review` optionally provides an independent direct-source
   replication-code review through pi/Ollama.
-- `reviewer2-review-response` executes approved comments behind verification
+- `kalle-review-response` executes approved comments behind verification
   gates.
 
 Agents that discover repository skills can use them in place. The background
 helper can also be called directly:
 
 ```bash
-.agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py check
-.agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py start paper.pdf
+.agents/skills/kalle/scripts/kalle_job.py check
+.agents/skills/kalle/scripts/kalle_job.py start paper.pdf
 ```
 
 The helper records the effective fast and strong models, protects each run in
@@ -148,7 +153,7 @@ skill's `SKILL.md` for collection and multi-review synthesis rules.
   main paper and visible to every stage except the math Proofreader.
 
   ```bash
-  reviewer2 paper.pdf --supp appendix.pdf --supp online_appendix.pdf
+  kalle paper.pdf --supp appendix.pdf --supp online_appendix.pdf
   ```
 
 - **Replication-code directory** — `--code-dir PATH`. Source files are
@@ -156,7 +161,7 @@ skill's `SKILL.md` for collection and multi-review synthesis rules.
   code-audit stages.
 
   ```bash
-  reviewer2 paper.pdf --code-dir ./replication/
+  kalle paper.pdf --code-dir ./replication/
   ```
 
 A volume circuit breaker halts the run if the combined page count exceeds
@@ -166,7 +171,7 @@ A volume circuit breaker halts the run if the combined page count exceeds
 
 ## What the report contains
 
-- **Is It Credible?** A short essay (up to 700 words) answering the
+- **Does It Hold Up?** A short essay (up to 700 words) answering the
   titular question.
 - **The Bottom Line.** Three to five sentences on whether the paper's
   contributions hold.
@@ -187,7 +192,7 @@ working directory and are chained together. To resume, reuse the directory
 and name the first incomplete pipeline checkpoint explicitly:
 
 ```bash
-poetry run reviewer2 paper.pdf --work-dir ./run --start-stage 3.0
+poetry run kalle paper.pdf --work-dir ./run --start-stage 3.0
 ```
 
 Inspect `run/pipeline_execution.log` before choosing the checkpoint. A fresh
@@ -255,7 +260,7 @@ aggressively.
 ### Provider and model
 
 Settings are resolved in this order (later wins): built-in defaults →
-`reviewer2.yaml` → `.env` → environment variables → CLI flags.
+`kalle.yaml` → `.env` → environment variables → CLI flags.
 
 **CLI flags:**
 
@@ -265,21 +270,21 @@ Settings are resolved in this order (later wins): built-in defaults →
 | `--fast-model MODEL` | Override the fast tier (metadata, formatting stages) |
 | `--strong-model MODEL` | Override the strong tier (breaker, reviewer, math stages) |
 | `--base-url URL` | Override the provider base URL |
-| `--config PATH` | Path to a `reviewer2.yaml` config file |
+| `--config PATH` | Path to a `kalle.yaml` config file |
 
 **Environment variables:**
 
 | Variable | Purpose |
 |----------|---------|
-| `REVIEWER2_API_KEY` | API key for your LLM provider |
-| `REVIEWER2_BASE_URL` | Provider base URL |
-| `REVIEWER2_FAST_MODEL` | Fast-tier model name |
-| `REVIEWER2_STRONG_MODEL` | Strong-tier model name |
+| `KALLE_API_KEY` | API key for your LLM provider |
+| `KALLE_BASE_URL` | Provider base URL |
+| `KALLE_FAST_MODEL` | Fast-tier model name |
+| `KALLE_STRONG_MODEL` | Strong-tier model name |
 | `MATHPIX_APP_ID` | Mathpix app ID (only with `--math`) |
 | `MATHPIX_APP_KEY` | Mathpix app key (only with `--math`) |
 
-**`reviewer2.yaml`** (optional, place in working directory or
-`~/.config/reviewer2/config.yaml`):
+**`kalle.yaml`** (optional, place in working directory or
+`~/.config/kalle/config.yaml`):
 
 ```yaml
 provider:
@@ -293,13 +298,13 @@ provider:
 
 ```bash
 # Ollama Cloud (default)
-REVIEWER2_API_KEY=your-ollama-key reviewer2 paper.pdf
+KALLE_API_KEY=your-ollama-key kalle paper.pdf
 
 # OpenAI
-reviewer2 paper.pdf --base-url https://api.openai.com/v1 --model gpt-4o
+kalle paper.pdf --base-url https://api.openai.com/v1 --model gpt-4o
 
 # Any OpenAI-compatible endpoint
-reviewer2 paper.pdf --base-url https://your-endpoint/v1 --model your-model
+kalle paper.pdf --base-url https://your-endpoint/v1 --model your-model
 ```
 
 ---
@@ -341,4 +346,4 @@ The pipeline and prompts in this repository are the result of many months
 of empirical tuning by The Catalogue of Errors Ltd. The names
 "Reviewer 2", "isitcredible.com", and "The Catalogue of Errors" are
 trademarks and are not licensed under Apache 2.0. Forks must use a
-different name.
+different name. This fork is therefore called `kalle`.

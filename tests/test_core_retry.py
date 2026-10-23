@@ -4,8 +4,8 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from reviewer2.config import Config, ProviderConfig
-from reviewer2.core import DEFAULT_MAX_OUTPUT_TOKENS, call_llm
+from kalle.config import Config, ProviderConfig
+from kalle.core import DEFAULT_MAX_OUTPUT_TOKENS, call_llm
 
 
 class _FailingCompletions:
@@ -37,8 +37,8 @@ class CoreRetryTests(unittest.TestCase):
     def test_authentication_failure_is_not_retried(self) -> None:
         completions = _FailingCompletions("401 Unauthorized: invalid API key")
         client = SimpleNamespace(chat=SimpleNamespace(completions=completions))
-        with patch("reviewer2.core._make_client", return_value=client), patch(
-            "reviewer2.core.time.sleep"
+        with patch("kalle.core._make_client", return_value=client), patch(
+            "kalle.core.time.sleep"
         ) as sleep:
             with self.assertRaisesRegex(RuntimeError, "Authentication failed"):
                 call_llm(prompt="test", max_retries=4, config=self.config)
@@ -48,8 +48,8 @@ class CoreRetryTests(unittest.TestCase):
     def test_rate_limit_is_finite_by_default(self) -> None:
         completions = _FailingCompletions("429 Too Many Requests")
         client = SimpleNamespace(chat=SimpleNamespace(completions=completions))
-        with patch("reviewer2.core._make_client", return_value=client), patch(
-            "reviewer2.core.time.sleep"
+        with patch("kalle.core._make_client", return_value=client), patch(
+            "kalle.core.time.sleep"
         ):
             with self.assertRaisesRegex(RuntimeError, "Rate limit exceeded after 2 attempts"):
                 call_llm(prompt="test", max_retries=2, config=self.config)
@@ -58,7 +58,7 @@ class CoreRetryTests(unittest.TestCase):
     def test_output_cap_defaults_and_stage_override(self) -> None:
         completions = _RecordingCompletions()
         client = SimpleNamespace(chat=SimpleNamespace(completions=completions))
-        with patch("reviewer2.core._make_client", return_value=client):
+        with patch("kalle.core._make_client", return_value=client):
             call_llm(prompt="test", config=self.config)
             call_llm(prompt="test", max_output_tokens=1000, config=self.config)
         self.assertEqual(completions.kwargs[0]["max_tokens"], DEFAULT_MAX_OUTPUT_TOKENS)

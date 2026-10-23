@@ -1,4 +1,4 @@
-"""Configuration management for reviewer2."""
+"""Configuration management for kalle."""
 
 import os
 from pathlib import Path
@@ -12,7 +12,7 @@ load_dotenv()
 
 class ProviderConfig(BaseModel):
     base_url: str = "https://ollama.com/v1"
-    api_key: str | None = Field(default_factory=lambda: os.getenv("REVIEWER2_API_KEY"))
+    api_key: str | None = Field(default_factory=lambda: os.getenv("KALLE_API_KEY"))
     fast_model: str = "deepseek-v4.1-flash:cloud"
     strong_model: str = "kimi-k2.6:cloud"
     temperature: float = 0.1
@@ -24,8 +24,8 @@ class Config(BaseModel):
 
 def _config_search_paths() -> list[Path]:
     return [
-        Path("./reviewer2.yaml"),
-        Path.home() / ".config" / "reviewer2" / "config.yaml",
+        Path("./kalle.yaml"),
+        Path.home() / ".config" / "kalle" / "config.yaml",
     ]
 
 
@@ -47,13 +47,13 @@ def load_config(config_path: str | None = None) -> Config:
 
     # Env var overrides (always win over file)
     p = config.provider
-    if val := os.getenv("REVIEWER2_API_KEY"):
+    if val := os.getenv("KALLE_API_KEY"):
         p.api_key = val
-    if val := os.getenv("REVIEWER2_BASE_URL"):
+    if val := os.getenv("KALLE_BASE_URL"):
         p.base_url = val
-    if val := os.getenv("REVIEWER2_FAST_MODEL"):
+    if val := os.getenv("KALLE_FAST_MODEL"):
         p.fast_model = val
-    if val := os.getenv("REVIEWER2_STRONG_MODEL"):
+    if val := os.getenv("KALLE_STRONG_MODEL"):
         p.strong_model = val
 
     return config

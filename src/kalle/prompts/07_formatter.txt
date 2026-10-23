@@ -38,7 +38,7 @@ TASK 3: ENSURE STRUCTURE COMPLIANCE
 
 Verify the review has exactly these four sections with no preamble or postscript, in this order:
 
-**## Is It Credible?**
+**## Does It Hold Up?**
 - Prose paragraphs only
 - NO sub-headings, NO bullet points, NO bold labels within
 - Should flow as unified essay
@@ -98,7 +98,7 @@ TASK 3: IMPOSE FORMATTING RULES
 - Always try to put page number references **at the end of sentences** (p. 1).
 
 **Bold text:**
-- NEVER in "Is It Credible?" section
+- NEVER in "Does It Hold Up?" section
 - ONLY for issue/suggestion labels in "Potential Issues" and "Future Research"
 - Format: **Label in sentence case:** (colon inside the bold)
 
@@ -215,7 +215,7 @@ You will produce the final polished review, ensuring that it is coherent, cohesi
 
 Output the polished review with all four sections:
 
-## Is It Credible?
+## Does It Hold Up?
 
 [Polished prose]
 

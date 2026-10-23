@@ -1,4 +1,4 @@
-"""Stage functions for the Reviewer 2 pipeline.
+"""Stage functions for the kalle pipeline.
 
 Each stage is a thin wrapper that loads a prompt, substitutes context, calls
 Gemini, and writes the result to ``output_dir``. Orchestration — which stages
@@ -12,15 +12,15 @@ import os
 
 import requests
 
-from reviewer2.core import call_llm, load_prompt, save_output
-from reviewer2.helpers import (
+from kalle.core import call_llm, load_prompt, save_output
+from kalle.helpers import (
     extract_info_fields,
     get_citation_block,
     inject_page_numbers,
     load_instruction,
 )
-from reviewer2.core import _PDF_TEXT_CACHE
-from reviewer2.mathpix import extract_equations_mathpix
+from kalle.core import _PDF_TEXT_CACHE
+from kalle.mathpix import extract_equations_mathpix
 
 try:
     from rainer.search import PaperSearch
@@ -70,7 +70,7 @@ def _extract_search_query(issues_text: str) -> str:
 
 def _web_search_block(query: str, max_results: int = 5) -> str:
     """Return a formatted block of web search results from Ollama, or '' on failure."""
-    api_key = os.getenv("REVIEWER2_API_KEY")
+    api_key = os.getenv("KALLE_API_KEY")
     if not api_key:
         return ""
     try:

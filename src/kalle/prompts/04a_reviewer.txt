@@ -56,7 +56,7 @@ OUTPUT STRUCTURE
 ═══════════════════════════════════════════════════════════════
 Produce exactly three sections. No preamble. No postscript.
 
-**Is It Credible?**
+**Does It Hold Up?**
 Your assessment.
 - Length: Up to ~700 words.
 - Format: Paragraphs only. No subheadings. No bullet points. No bold labels within prose.
@@ -68,9 +68,9 @@ Your assessment.
 - **Do not use bold text, bullet points, or subheadings.**
 
 **The Bottom Line**
-A single paragraph summarizing your assessment for a general reader. You must address the credibility of the big claims highlighted in the first paragraph of "Is It Credible?"
+A single paragraph summarizing your assessment for a general reader. You must address the credibility of the big claims highlighted in the first paragraph of "Does It Hold Up?"
 - Length: 3-5 sentences.
-- Constraint: Must align precisely with "Is It Credible?" in tone and conclusion.
+- Constraint: Must align precisely with "Does It Hold Up?" in tone and conclusion.
 
 **Future Research**
 Constructive proposals for research that would address any weaknesses identified in the text or build on its contributions.

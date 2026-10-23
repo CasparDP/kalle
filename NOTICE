@@ -1,3 +1,13 @@
+kalle
+Copyright 2026 Caspar (https://github.com/CasparDP/kalle)
+
+kalle is a modified version of reviewer2 by The Catalogue of Errors Ltd. The
+fork replaces the Gemini backend with a provider-agnostic OpenAI SDK backend,
+renames the package, CLI, and report branding, and adds agent skills. The
+original NOTICE follows unchanged.
+
+===============================================================================
+
 reviewer2
 Copyright 2026 The Catalogue of Errors Ltd
 

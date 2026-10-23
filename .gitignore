@@ -39,7 +39,7 @@ output/
 reports/
 quality_reports/
 work/
-.reviewer2-runs/
+.kalle-runs/
 *.log
 
 # Agent configs (local only)

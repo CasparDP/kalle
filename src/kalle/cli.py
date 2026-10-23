@@ -1,4 +1,4 @@
-"""Command-line interface for reviewer2."""
+"""Command-line interface for kalle."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from pathlib import Path
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="reviewer2",
+        prog="kalle",
         description="Adversarial peer review for academic PDFs.",
     )
     parser.add_argument("pdf", help="Path to the PDF to review.")
@@ -82,8 +82,8 @@ def build_parser() -> argparse.ArgumentParser:
     # ---- LLM provider ----
     parser.add_argument(
         "--config", default=None, metavar="PATH",
-        help="Path to a reviewer2.yaml config file. Defaults to ./reviewer2.yaml or "
-             "~/.config/reviewer2/config.yaml.",
+        help="Path to a kalle.yaml config file. Defaults to ./kalle.yaml or "
+             "~/.config/kalle/config.yaml.",
     )
     parser.add_argument(
         "--base-url", default=None, metavar="URL",
@@ -146,23 +146,23 @@ def main(argv: list[str] | None = None) -> int:
 
     # Apply CLI provider overrides as env vars so load_config() picks them up.
     if args.base_url:
-        os.environ["REVIEWER2_BASE_URL"] = args.base_url
+        os.environ["KALLE_BASE_URL"] = args.base_url
     if args.model:
-        os.environ["REVIEWER2_FAST_MODEL"] = args.model
-        os.environ["REVIEWER2_STRONG_MODEL"] = args.model
+        os.environ["KALLE_FAST_MODEL"] = args.model
+        os.environ["KALLE_STRONG_MODEL"] = args.model
     if args.fast_model:
-        os.environ["REVIEWER2_FAST_MODEL"] = args.fast_model
+        os.environ["KALLE_FAST_MODEL"] = args.fast_model
     if args.strong_model:
-        os.environ["REVIEWER2_STRONG_MODEL"] = args.strong_model
+        os.environ["KALLE_STRONG_MODEL"] = args.strong_model
 
     # Load config now and inject into core so all stages share the same instance.
-    from reviewer2.config import load_config
-    import reviewer2.core as _core
+    from kalle.config import load_config
+    import kalle.core as _core
     _core._config = load_config(args.config)
 
     if not _core._config.provider.api_key:
         print(
-            "warning: REVIEWER2_API_KEY not set. Requests will likely fail unless "
+            "warning: KALLE_API_KEY not set. Requests will likely fail unless "
             "the provider does not require authentication.",
             file=sys.stderr,
         )
@@ -175,11 +175,11 @@ def main(argv: list[str] | None = None) -> int:
         work_dir.mkdir(parents=True, exist_ok=True)
         cleanup_work_dir = False
     else:
-        work_dir = Path(tempfile.mkdtemp(prefix="reviewer2_"))
+        work_dir = Path(tempfile.mkdtemp(prefix="kalle_"))
         cleanup_work_dir = not args.keep_work_dir
 
     # Defer pipeline import to keep --help fast.
-    from reviewer2.pipeline import PipelineError, run
+    from kalle.pipeline import PipelineError, run
 
     try:
         final_txt = run(

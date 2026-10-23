@@ -1,18 +1,23 @@
-# reviewer2 — project notes
+# kalle: project notes
+
+kalle is a fork of reviewer2 (isitcredible.com, The Catalogue of Errors Ltd),
+renamed in v2.0.0 because the upstream NOTICE requires forks to use a
+different name. Reports and prompts must not use "Reviewer 2",
+"Is It Credible?", or "isitcredible"; credits stay in README and NOTICE.
 
 ## Running the pipeline from Claude Code
 
-**Before invoking `reviewer2` on a real paper, confirm with the user.** A
+**Before invoking `kalle` on a real paper, confirm with the user.** A
 default run with Ollama Cloud (DeepSeek V4.1 Flash + Kimi K2.6) takes 2–4 hours. With Gemini it
 was 15–45 minutes. That is not a routine command to fire off autonomously.
 
 Entry point:
 
 ```bash
-poetry run reviewer2 paper.pdf -o report.txt
+poetry run kalle paper.pdf -o report.txt
 ```
 
-Requires `REVIEWER2_API_KEY` in the environment — put it in `.env` at the
+Requires `KALLE_API_KEY` in the environment — put it in `.env` at the
 repo root (gitignored, auto-loaded). Install
 for development with `poetry install`.
 
@@ -35,7 +40,7 @@ Provider flags: `--model`, `--fast-model`, `--strong-model`, `--base-url`,
 ## Dev / testing gotchas
 
 **Isolated module imports:** `__init__.py` chains pipeline → stages →
-reportlab, so `from reviewer2.config import ...` fails unless reportlab is
+reportlab, so `from kalle.config import ...` fails unless reportlab is
 installed. Load modules in isolation with
 `importlib.util.spec_from_file_location` or bypass via
 `sys.path.insert(0, 'src')` with direct imports.
@@ -43,6 +48,11 @@ installed. Load modules in isolation with
 **docling:** cannot be added via `poetry add` (torch transitive dep
 conflict). Install separately: `pip install docling`. Pipeline works
 without it via graceful fallback.
+
+**Poetry env is keyed by project name:** the v2.0.0 rename created a
+fresh `kalle-*-py3.12` venv. Hand-installed packages (docling, editable
+RAiner, pytest, ruff, opencv-python) do not carry over; reinstall them with
+`poetry run pip install ...` after any rename or env rebuild.
 
 **Large-scale stage edits:** use a `python3 -<<'EOF'` heredoc with regex
 rather than individual Edit calls — stages.py has 30+ identical call
@@ -56,14 +66,16 @@ reference only.
 Semver. When bumping the version, update **all three** in lockstep:
 
 - `pyproject.toml` (`version = "..."`)
-- `src/reviewer2/__init__.py` (`__version__ = "..."`)
+- `src/kalle/__init__.py` (`__version__ = "..."`)
 - `README.md` (the `**Version:**` line)
 
 These drifted apart between the initial commit and v1.0.1 (pyproject was at
 1.0.0 while `__init__.py` was still at 0.1.0). Grep for the old version
 before committing to catch any that were missed.
 
-Tag as `vX.Y.Z` after the release commit, then `git push && git push --tags`.
+Tag as `vX.Y.Z` after the release commit, then `git push` and push the
+tag by name (`git push origin vX.Y.Z`). Never `git push --tags`: the local
+v1.0.x tags are upstream's.
 
 Bump size is a judgment call, not a mechanical rule. A change that technically
 alters a default but has no real dependents yet is a patch, not a minor.
@@ -71,7 +83,8 @@ Breaking changes in the OSS port → `v2.0.0` (the README promises this).
 
 ## v2 migration: model-agnostic LLM backend
 
-**Status:** complete.
+**Status:** complete. Written before the v2.0.0 rename; read
+`reviewer2` / `REVIEWER2_*` below as `kalle` / `KALLE_*`.
 
 **Goal:** Replace the hard Gemini dependency with a provider-agnostic backend
 using the OpenAI SDK. Default to Ollama Cloud. Keep Gemini (and any other

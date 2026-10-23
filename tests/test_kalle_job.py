@@ -14,15 +14,15 @@ from types import SimpleNamespace
 
 SCRIPT = (
     Path(__file__).resolve().parents[1]
-    / ".agents/skills/reviewer2-second-opinion/scripts/reviewer2_job.py"
+    / ".agents/skills/kalle/scripts/kalle_job.py"
 )
-SPEC = importlib.util.spec_from_file_location("reviewer2_job", SCRIPT)
+SPEC = importlib.util.spec_from_file_location("kalle_job", SCRIPT)
 assert SPEC and SPEC.loader
-reviewer2_job = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(reviewer2_job)
+kalle_job = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(kalle_job)
 
 
-class Reviewer2JobTests(unittest.TestCase):
+class KalleJobTests(unittest.TestCase):
     def test_default_models_lock(self) -> None:
         provider = {
             "fast_model": "fast:cloud",
@@ -30,24 +30,24 @@ class Reviewer2JobTests(unittest.TestCase):
             "default_fast_model": "fast:cloud",
             "default_strong_model": "strong:cloud",
         }
-        self.assertTrue(reviewer2_job._default_models(provider))
-        self.assertFalse(reviewer2_job._default_models({**provider, "strong_model": "other:cloud"}))
+        self.assertTrue(kalle_job._default_models(provider))
+        self.assertFalse(kalle_job._default_models({**provider, "strong_model": "other:cloud"}))
 
     def test_dotenv_presence_without_exposing_value(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             dotenv = Path(temporary) / ".env"
-            dotenv.write_text("OTHER=x\nexport REVIEWER2_API_KEY='secret'\n", encoding="utf-8")
-            self.assertTrue(reviewer2_job._dotenv_has_value(dotenv, "REVIEWER2_API_KEY"))
-            self.assertFalse(reviewer2_job._dotenv_has_value(dotenv, "MISSING"))
-            self.assertFalse(reviewer2_job._file_permissions_secure(dotenv))
+            dotenv.write_text("OTHER=x\nexport KALLE_API_KEY='secret'\n", encoding="utf-8")
+            self.assertTrue(kalle_job._dotenv_has_value(dotenv, "KALLE_API_KEY"))
+            self.assertFalse(kalle_job._dotenv_has_value(dotenv, "MISSING"))
+            self.assertFalse(kalle_job._file_permissions_secure(dotenv))
             dotenv.chmod(0o600)
-            self.assertTrue(reviewer2_job._file_permissions_secure(dotenv))
+            self.assertTrue(kalle_job._file_permissions_secure(dotenv))
 
     def test_process_identity_rejects_non_helper_process(self) -> None:
-        identity = reviewer2_job._process_identity(os.getpid())
+        identity = kalle_job._process_identity(os.getpid())
         self.assertIsNotNone(identity)
         self.assertFalse(
-            reviewer2_job._process_matches(os.getpid(), Path.cwd(), identity)
+            kalle_job._process_matches(os.getpid(), Path.cwd(), identity)
         )
 
     def test_run_job_writes_durable_completion_state(self) -> None:
@@ -56,7 +56,7 @@ class Reviewer2JobTests(unittest.TestCase):
             work_dir = run_dir / "work"
             work_dir.mkdir()
             report = run_dir / "review.txt"
-            log = run_dir / "reviewer2.log"
+            log = run_dir / "kalle.log"
             command = [
                 sys.executable,
                 "-c",
@@ -82,13 +82,13 @@ class Reviewer2JobTests(unittest.TestCase):
                 json.dumps({"status": "created"}), encoding="utf-8"
             )
 
-            self.assertEqual(reviewer2_job._run_job(run_dir), 0)
+            self.assertEqual(kalle_job._run_job(run_dir), 0)
             state = json.loads((run_dir / "state.json").read_text(encoding="utf-8"))
             self.assertEqual(state["status"], "complete")
             self.assertEqual(state["exit_code"], 0)
             self.assertTrue(state["report_exists"])
 
-            payload = reviewer2_job._status_payload(run_dir, job, state, 5)
+            payload = kalle_job._status_payload(run_dir, job, state, 5)
             self.assertEqual(payload["stage_file_count"], 1)
             self.assertEqual(payload["last_stage_file"], "01_stage.txt")
 
@@ -102,7 +102,7 @@ class Reviewer2JobTests(unittest.TestCase):
                 "run_dir": temporary,
                 "report": str(run_dir / "review.txt"),
                 "work_dir": str(work_dir),
-                "log": str(run_dir / "reviewer2.log"),
+                "log": str(run_dir / "kalle.log"),
                 "command": [sys.executable, "-c", "import time; time.sleep(30)"],
                 "use_caffeinate": False,
             }
@@ -111,7 +111,7 @@ class Reviewer2JobTests(unittest.TestCase):
                 json.dumps({"status": "created"}), encoding="utf-8"
             )
 
-            pid = reviewer2_job._launch_helper(run_dir, job)
+            pid = kalle_job._launch_helper(run_dir, job)
             try:
                 for _ in range(50):
                     state = json.loads((run_dir / "state.json").read_text(encoding="utf-8"))
@@ -122,7 +122,7 @@ class Reviewer2JobTests(unittest.TestCase):
                     self.fail("helper did not enter running state")
 
                 self.assertEqual(
-                    reviewer2_job.cmd_stop(SimpleNamespace(run_dir=str(run_dir))), 0
+                    kalle_job.cmd_stop(SimpleNamespace(run_dir=str(run_dir))), 0
                 )
                 final_state = json.loads(
                     (run_dir / "state.json").read_text(encoding="utf-8")
@@ -130,7 +130,7 @@ class Reviewer2JobTests(unittest.TestCase):
                 self.assertEqual(final_state["status"], "stopped")
                 self.assertEqual(final_state["pid"], pid)
             finally:
-                if reviewer2_job._process_exists(pid):
+                if kalle_job._process_exists(pid):
                     try:
                         os.killpg(pid, 15)
                     except (ProcessLookupError, PermissionError):
@@ -145,7 +145,7 @@ class Reviewer2JobTests(unittest.TestCase):
                 "run_dir": temporary,
                 "report": str(run_dir / "review.txt"),
                 "work_dir": str(run_dir / "work"),
-                "log": str(run_dir / "reviewer2.log"),
+                "log": str(run_dir / "kalle.log"),
                 "base_command": base_command,
                 "command": base_command + ["--start-stage", "2.0"],
                 "use_caffeinate": False,
@@ -157,11 +157,11 @@ class Reviewer2JobTests(unittest.TestCase):
             )
 
             zero = SimpleNamespace(run_dir=str(run_dir), start_stage=0.0, stop_stage=None)
-            self.assertEqual(reviewer2_job.cmd_resume(zero), 2)
+            self.assertEqual(kalle_job.cmd_resume(zero), 2)
 
             resumed = SimpleNamespace(run_dir=str(run_dir), start_stage=5.0, stop_stage=None)
-            with patch.object(reviewer2_job, "_launch_helper", return_value=999):
-                self.assertEqual(reviewer2_job.cmd_resume(resumed), 0)
+            with patch.object(kalle_job, "_launch_helper", return_value=999):
+                self.assertEqual(kalle_job.cmd_resume(resumed), 0)
             saved = json.loads((run_dir / "job.json").read_text(encoding="utf-8"))
             self.assertEqual(saved["command"], base_command + ["--start-stage", "5.0"])
 

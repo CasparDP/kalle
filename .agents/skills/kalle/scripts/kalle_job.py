@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Durable background launcher for reviewer2 second-opinion runs."""
+"""Durable background launcher for kalle second-opinion runs."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ from typing import Any
 
 
 STATE_VERSION = 1
-DEFAULT_RUNS_DIR = ".reviewer2-runs"
+DEFAULT_RUNS_DIR = ".kalle-runs"
 # Keep detached Popen objects alive so Python does not emit false-positive
 # ResourceWarnings while the deliberately independent helpers are running.
 _DETACHED_PROCESSES: list[subprocess.Popen[Any]] = []
@@ -41,15 +41,15 @@ def _write_json(path: Path, data: dict[str, Any]) -> None:
     temporary.replace(path)
 
 
-def _is_reviewer2_repo(path: Path) -> bool:
-    return (path / "pyproject.toml").is_file() and (path / "src/reviewer2/cli.py").is_file()
+def _is_kalle_repo(path: Path) -> bool:
+    return (path / "pyproject.toml").is_file() and (path / "src/kalle/cli.py").is_file()
 
 
 def _find_repo(explicit: str | None = None) -> Path:
     candidates: list[Path] = []
     if explicit:
         candidates.append(Path(explicit).expanduser())
-    if value := os.environ.get("REVIEWER2_REPO"):
+    if value := os.environ.get("KALLE_REPO"):
         candidates.append(Path(value).expanduser())
     candidates.extend(Path.cwd().resolve().parents)
     candidates.insert(0, Path.cwd().resolve())
@@ -62,25 +62,25 @@ def _find_repo(explicit: str | None = None) -> Path:
         if candidate in seen:
             continue
         seen.add(candidate)
-        if _is_reviewer2_repo(candidate):
+        if _is_kalle_repo(candidate):
             return candidate
-    raise RuntimeError("reviewer2 repository not found; pass --repo or set REVIEWER2_REPO")
+    raise RuntimeError("kalle repository not found; pass --repo or set KALLE_REPO")
 
 
 def _runner_command(repo: Path) -> list[str]:
     poetry = shutil.which("poetry")
     if poetry and (repo / "poetry.lock").is_file():
-        return [poetry, "run", "python", "-m", "reviewer2.cli"]
-    executable = shutil.which("reviewer2")
+        return [poetry, "run", "python", "-m", "kalle.cli"]
+    executable = shutil.which("kalle")
     if executable:
         return [executable]
-    raise RuntimeError("reviewer2 is not installed and Poetry is unavailable")
+    raise RuntimeError("kalle is not installed and Poetry is unavailable")
 
 
 def _effective_provider(repo: Path, config_path: str | None = None) -> dict[str, Any]:
-    """Resolve the same provider configuration the reviewer2 CLI will use."""
+    """Resolve the same provider configuration the kalle CLI will use."""
     script = (
-        "import json,sys; from reviewer2.config import ProviderConfig, load_config; "
+        "import json,sys; from kalle.config import ProviderConfig, load_config; "
         "c=load_config(None if sys.argv[1] == '-' else sys.argv[1]); "
         "d=ProviderConfig.model_fields; "
         "print(json.dumps({'base_url': c.provider.base_url, "
@@ -91,8 +91,8 @@ def _effective_provider(repo: Path, config_path: str | None = None) -> dict[str,
         "'api_key_present': bool(c.provider.api_key)}))"
     )
     command = _runner_command(repo)
-    # Replace the reviewer2 module invocation with the same environment's Python.
-    if command[-3:] == ["python", "-m", "reviewer2.cli"]:
+    # Replace the kalle module invocation with the same environment's Python.
+    if command[-3:] == ["python", "-m", "kalle.cli"]:
         command = command[:-2]
     else:
         poetry = shutil.which("poetry")
@@ -106,11 +106,11 @@ def _effective_provider(repo: Path, config_path: str | None = None) -> dict[str,
         timeout=30,
     )
     if result.returncode != 0:
-        raise RuntimeError("could not resolve reviewer2 provider config: " + result.stderr.strip())
+        raise RuntimeError("could not resolve kalle provider config: " + result.stderr.strip())
     try:
         return json.loads(result.stdout)
     except json.JSONDecodeError as error:
-        raise RuntimeError("reviewer2 provider config returned invalid output") from error
+        raise RuntimeError("kalle provider config returned invalid output") from error
 
 
 def _default_models(provider: dict[str, Any]) -> bool:
@@ -224,7 +224,7 @@ def _load_run(run_dir_value: str) -> tuple[Path, dict[str, Any], dict[str, Any]]
     job_path = run_dir / "job.json"
     state_path = run_dir / "state.json"
     if not job_path.exists() or not state_path.exists():
-        raise RuntimeError(f"not a reviewer2 helper run directory: {run_dir}")
+        raise RuntimeError(f"not a kalle helper run directory: {run_dir}")
     return run_dir, _read_json(job_path), _read_json(state_path)
 
 
@@ -361,11 +361,11 @@ def cmd_start(args: argparse.Namespace) -> int:
         return 2
 
     if not provider["api_key_present"] and not args.allow_missing_api_key:
-        print("error: REVIEWER2_API_KEY is not available in the effective config", file=sys.stderr)
+        print("error: KALLE_API_KEY is not available in the effective config", file=sys.stderr)
         return 2
     if not _default_models(provider) and not args.allow_non_default:
         print(
-            "error: effective reviewer2 models differ from the repository defaults; "
+            "error: effective kalle models differ from the repository defaults; "
             "pass --allow-non-default for an intentional override",
             file=sys.stderr,
         )
@@ -392,7 +392,7 @@ def cmd_start(args: argparse.Namespace) -> int:
         "paper": str(pdf),
         "report": str(run_dir / "review.txt"),
         "work_dir": str(run_dir / "work"),
-        "log": str(run_dir / "reviewer2.log"),
+        "log": str(run_dir / "kalle.log"),
         "base_command": command,
         "command": command,
         "provider": {key: value for key, value in provider.items() if key != "api_key_present"},
@@ -407,7 +407,7 @@ def cmd_start(args: argparse.Namespace) -> int:
         return 0
 
     pid = _launch_helper(run_dir, job)
-    print(f"started reviewer2 job {pid}")
+    print(f"started kalle job {pid}")
     print(f"run_dir: {run_dir}")
     print(f"status: {Path(__file__).resolve()} status {shlex.quote(str(run_dir))}")
     return 0
@@ -548,7 +548,7 @@ def cmd_resume(args: argparse.Namespace) -> int:
         },
     )
     pid = _launch_helper(run_dir, job)
-    print(f"resumed reviewer2 job {pid}")
+    print(f"resumed kalle job {pid}")
     print(f"run_dir: {run_dir}")
     return 0
 
@@ -580,7 +580,7 @@ def cmd_stop(args: argparse.Namespace) -> int:
             "updated_at": _now(),
         },
     )
-    print(f"stopped reviewer2 job {pid}")
+    print(f"stopped kalle job {pid}")
     return 0
 
 
@@ -588,7 +588,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    check = subparsers.add_parser("check", help="Check the reviewer2 runner and prerequisites.")
+    check = subparsers.add_parser("check", help="Check the kalle runner and prerequisites.")
     check.add_argument("--repo")
     check.add_argument("--config")
     check.add_argument("--json", action="store_true")
@@ -602,11 +602,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--allow-non-deepseek",
         dest="allow_non_default",
         action="store_true",
-        help="Accept an intentional non-default reviewer2 model configuration.",
+        help="Accept an intentional non-default kalle model configuration.",
     )
     check.set_defaults(func=cmd_check)
 
-    start = subparsers.add_parser("start", help="Launch a reviewer2 job in the background.")
+    start = subparsers.add_parser("start", help="Launch a kalle job in the background.")
     start.add_argument("pdf")
     start.add_argument("--repo")
     start.add_argument("--run-dir")

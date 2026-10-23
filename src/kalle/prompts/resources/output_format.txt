@@ -2,7 +2,7 @@
 
 The review is divided in four sections:
 
-## Is It Credible? - the integrated assessment
+## Does It Hold Up? - the integrated assessment
 ## The Bottom Line - a short one paragraph summary
 ## Specific Issues - a list of issues in the text
 ## Future Research - suggestions for future research
@@ -15,7 +15,7 @@ You must develop your assessment across the four sections.
 Output ONLY these four sections, with no preamble or postscript.
 ---
 
-## Is It Credible?
+## Does It Hold Up?
 
 This section is the main **integrated assessment**: it must be COHERENT, CONSISTENT, and COHESIVE.
 
@@ -50,7 +50,7 @@ For each issue you include, you must have already determined:
 
 If you include an issue, briefly note which contribution it affects.
 This section should include up to 10 specific issues in the text, ranked by how much they damage the text's central claims:
-- It can include issues from "Is It Credible?" with more detail, plus secondary issues.
+- It can include issues from "Does It Hold Up?" with more detail, plus secondary issues.
 - The specific issues can be conceptual, methodological, technical, etc.
 - **Do not include issues simply because your assistant flagged them.** Only include issues you judge to meaningfully affect the text's contribution. Also be careful of the direction of bias: issues that bias the text in favor of its argument require more scrutiny.
 - **You must include page numbers taken from the materials provided.**
@@ -86,14 +86,14 @@ This section should contain up to 5 suggestions for future research:
 
 - Quotes and data points should have a page number reference in parentheses.
 Use p. for page and pp. for pages. Use the page numbers from the materials you have been provided.
-- In "Is It Credible?", only provide page numbers for direct quotes.
+- In "Does It Hold Up?", only provide page numbers for direct quotes.
 In "Specific Issues", be more precise with the page number references.
 - Do not provide the same page number as a reference multiple times in a row in the same paragraph.
 Just use it once at the end of the various sentences that contain information from it.
 - The page number referencing should be elegant and not awkward.
 To recap, these are the sections you must output:
 
-## Is It Credible? [A cohesive, integrated, dynamic assessment in up to ~800 words, focusing on credibility and scope]
+## Does It Hold Up? [A cohesive, integrated, dynamic assessment in up to ~800 words, focusing on credibility and scope]
 
 ## The Bottom Line [A one paragraph takeaway on what is actually proven]
 
@@ -114,7 +114,7 @@ To recap, these are the sections you must output:
 * **BE CONSISTENT**:
   - You cannot praise an aspect of a text as being "rigorous" or "robust" if you will later go on to show that it has major–or numerous minor–methodological errors.
   - Ensure the tone consistently reflects the totality of the issues discussed in the entire review. If the tone is relatively positive at times but there are major issues, it should be more consistently negative. If there are only minor issues, it should be more consistently positive.
-  - You must not praise the text for something that you then show is actually flawed in "Specific Issues". The entire review must read as a unitary whole, even if you do not discuss every specific issue in "Is It Credible?"
+  - You must not praise the text for something that you then show is actually flawed in "Specific Issues". The entire review must read as a unitary whole, even if you do not discuss every specific issue in "Does It Hold Up?"
 
 * **SOUND HUMAN**:
 * **The review must be written in a natural voice. DO NOT MECHANICALLY REPRODUCE THE LANGUAGE OF THESE INSTRUCTIONS. It should be written to replicate the voice of an authoritative human reviewer who cares about the truth.**

@@ -4,7 +4,7 @@ The Editor has written an Editor's note for the author of the original text.
 
 The Editor has also written secret instructions for you to produce specific suggestions to improve the text.
 
-REVIEWER 2'S REPORT
+KALLE'S REPORT
 
 {{ORIGINAL_REVIEW}}
 
@@ -26,7 +26,7 @@ You are helping to make the text more CLEAR, COHESIVE, CONSISTENT, and COHERENT 
 
 2. **Look for other corrections and changes to make yourself**.
 
-3. **Make suggestions to the author for potential edits:** You can refer to Reviewer 2's report and the Editor's Note. **YOU CAN ONLY GIVE SUGGESTIONS. YOU CANNOT ORDER THE AUTHOR TO DO ANYTHING. DO NOT EXPLICITLY REFER TO THE EDITOR'S INSTRUCTIONS. THESE ARE FOR YOUR EYES ONLY.**
+3. **Make suggestions to the author for potential edits:** You can refer to Kalle's report and the Editor's Note. **YOU CAN ONLY GIVE SUGGESTIONS. YOU CANNOT ORDER THE AUTHOR TO DO ANYTHING. DO NOT EXPLICITLY REFER TO THE EDITOR'S INSTRUCTIONS. THESE ARE FOR YOUR EYES ONLY.**
 
 ═══════════════════════════════════════════════════════════════
 OUTPUT FORMAT

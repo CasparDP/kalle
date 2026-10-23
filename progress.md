@@ -9,3 +9,20 @@ Marked milestone 1 ("Fork Identity & Community-Ready Public Repo") as done. Set 
 ## 2026-08-23 00:04 — Caspars-M2.local
 
 Added an explicit three-branch paper-review ensemble: two user-selected blind strong-model reviews plus a DeepSeek-locked reviewer2 background pass, with conditional replication-code review, checkpoint resume, durable status, and sign-off ledgers. Ported the upstream Mathpix privacy opt-out, prepared v1.1.0, added portable third-party workflow skills, and moved the private canonical skill to dot-files. No commits or pushes were made.
+
+## 2026-10-22 10:07 — Caspars-MacBook-Pro.local
+
+Released v1.1.0 on CasparDP/reviewer2 (tag on 3fa1d10); the --base smoke test on yellatit.pdf passed end to end in about 4.5 h with deepseek-v4.1-flash and kimi-k2.6. Milestone 2 done.
+
+## 2026-10-23 18:04 — Caspars-MacBook-Pro.local
+
+Progress: Renamed the fork from reviewer2 to kalle (v2.0.0, tagged and pushed; GitHub repo is now CasparDP/kalle), as the upstream NOTICE requires; reports carry "BANG BOOM REVIEW", the Kalle persona, and a "Does It Hold Up?" summary, with no upstream branding, checked by a live writer-stage run on Speaking Politics; Caspar added as author; global kalle skill installed. dot-files skills now point at kalle (commit de91c0a), with the old reviewer2-second-opinion copy removed.
+Open: Push dot-files (de91c0a, committed locally); repeat the rename steps on casparm2 and icke (git pull, .env keys to KALLE_*, rebuild the poetry env with docling, RAiner, pytest, ruff, opencv, relink the kalle skill in ~/.claude, ~/.codex, ~/.agents); one full kalle run on a new paper to exercise the renamed persona prompts (02g, 03c, 05c); LODDAR project name and github_url still say reviewer2 (change in the LODDAR app).
+Next: Prototype a Python script that fetches the SSRN search endpoint (https://api.ssrn.com/content/v1/bindings?query=…) or scrapes the search results page for a hardcoded test query and prints titles + URLs.
+
+Resume context:
+READ FIRST: loddar.md, CLAUDE.md, CHANGELOG.md (2.0.0 entry)
+STATE: v2.0.0 rename is on main (d03bfad, author commit 3d8bcd1), tag v2.0.0 pushed; tests pass (14). Live check output: smoke_test/kalle-v2.0.0-writer/report_kalle.txt.
+DECISIONS: persona Kalle; header BANG BOOM REVIEW; summary section Does It Hold Up?; NOTICE keeps 'Copyright 2026 Caspar'; local folder stays ~/Github/reviewer2.
+GOTCHAS: always gh -R CasparDP/kalle; never git push --tags; poetry venv is kalle-*-py3.12 with hand-installed packages.
+TASKS: the Open items above, then milestone 3.
